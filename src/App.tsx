@@ -1,14 +1,22 @@
-import './App.css'
+import React, { useState } from 'react';
+import { RadialTree } from './components/RadialTree';
+import { NodeInfo } from './components/NodeInfo';
+import { TreeNode } from './types/TreeData';
+import { sampleData } from './fakeData';
 
-function App() {
+const App: React.FC = () => {
+  const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
 
   return (
-
-      <div className='flex justify-center items-center min-h-screen w-full bg-slate-400'>
-        <h1 className='text-3xl'>The Tree Of Damned</h1>
+    <div className="flex h-screen">
+      <div className="w-3/4">
+        <RadialTree data={sampleData} onNodeSelect={setSelectedNode} />
       </div>
+      <div className="w-1/4 p-4">
+        <NodeInfo node={selectedNode} />
+      </div>
+    </div>
+  );
+};
 
-  )
-}
-
-export default App
+export default App;
