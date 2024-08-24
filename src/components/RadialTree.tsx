@@ -13,8 +13,8 @@ export const RadialTree: React.FC<RadialTreeProps> = ({ data, onNodeSelect }) =>
   const svgRef = useD3((svg) => {
     svg.selectAll("*").remove(); // Clear previous render
 
-    const width = 800;
-    const height = 800;
+    const width = 1200;
+    const height = 1200;
     const radius = Math.min(width, height) / 2 - 120;
 
     const tree = d3.cluster<TreeNode>()
@@ -37,6 +37,7 @@ export const RadialTree: React.FC<RadialTreeProps> = ({ data, onNodeSelect }) =>
     const node = g.selectAll('.node')
       .data(root.descendants())
       .join('g')
+      .attr('class','node')
       .attr('class', d => `node${d.children ? ' node--internal' : ' node--leaf'}`)
       .attr('transform', d => `rotate(${d.x - 90}) translate(${d.y},0)`)
       .on('click', (event, d) => onNodeSelect(d.data));
@@ -53,8 +54,17 @@ export const RadialTree: React.FC<RadialTreeProps> = ({ data, onNodeSelect }) =>
       .text(d => d.data.name)
       .clone(true).lower()
       .attr('stroke', 'white');
+    
+    // Implement zoom and pan
+    const zoom = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.5, 5])
+      .on('zoom', (event) => {
+        g.attr('transform', event.transform);
+      });
+
+    svg.call(zoom);
 
   }, [data, onNodeSelect]);
 
-  return <svg ref={svgRef} width="100%" height="100%" viewBox="0 0 800 800"></svg>;
+  return <svg ref={svgRef} width="100%" height="100%" viewBox="0 0 1200 1200"></svg>;
 };

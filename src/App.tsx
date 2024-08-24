@@ -8,11 +8,11 @@ const App: React.FC = () => {
   const [selectedNode, setSelectedNode] = useState<TreeNode | null>(null);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-slate-200">
       <div className="w-3/4">
         <RadialTree data={sampleData} onNodeSelect={setSelectedNode} />
       </div>
-      <div className="w-1/4 p-4">
+      <div className="w-1/4 p-4 bg-slate-300">
         <NodeInfo node={selectedNode} />
       </div>
     </div>
