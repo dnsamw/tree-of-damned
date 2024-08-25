@@ -1,70 +1,198 @@
-import React from 'react';
-import * as d3 from 'd3';
-import { HierarchyNode } from 'd3';
-import { TreeData, TreeNode } from '../types/TreeData';
-import { useD3 } from '../hooks/useD3';
+import React from "react";
+import * as d3 from "d3";
+import { useD3 } from "../hooks/useD3";
 
-interface RadialTreeProps {
-  data: TreeData;
-  onNodeSelect: (node: TreeNode | null) => void;
+interface FamilyMember {
+  id: string;
+  name: string;
+  family: string;
+  parentId?: string;
+  level: number;
 }
 
-export const RadialTree: React.FC<RadialTreeProps> = ({ data, onNodeSelect }) => {
-  const svgRef = useD3((svg) => {
-    svg.selectAll("*").remove(); // Clear previous render
+interface RadialTreeProps {
+  data: FamilyMember[];
+  onNodeSelect: (node: FamilyMember | null) => void;
+}
 
-    const width = 1200;
-    const height = 1200;
-    const radius = Math.min(width, height) / 2 - 120;
+export const RadialTree: React.FC<RadialTreeProps> = ({
+  data,
+  onNodeSelect,
+}) => {
+  const svgRef = useD3(
+    (svg) => {
+      svg.selectAll("*").remove(); // Clear previous render
 
-    const tree = d3.cluster<TreeNode>()
-      .size([360, radius])
-      .separation((a, b) => (a.parent == b.parent ? 1 : 2) / a.depth);
+      const width = 1200;
+      const height = 1200;
+      const radius = Math.min(width, height) / 2 - 120;
 
-    const root = tree(d3.hierarchy(data) as HierarchyNode<TreeNode>);
+      const g = svg
+        .append("g")
+        .attr("transform", `translate(${width / 2},${height / 2})`);
 
-    const g = svg.append('g')
-      .attr('transform', `translate(${width/2},${height/2})`);
+      // Group data by family
+      const groupedData = Array.from(d3.group(data, (d) => d.family));
 
-    const link = g.selectAll('.link')
-      .data(root.links())
-      .join('path')
-      .attr('class', 'link')
-      .attr('d', d3.linkRadial<d3.HierarchyPointLink<TreeNode>, d3.HierarchyPointNode<TreeNode>>()
-        .angle(d => d.x * Math.PI / 180)
-        .radius(d => d.y));
+      console.log({ groupedData });
 
-    const node = g.selectAll('.node')
-      .data(root.descendants())
-      .join('g')
-      .attr('class','node')
-      .attr('class', d => `node${d.children ? ' node--internal' : ' node--leaf'}`)
-      .attr('transform', d => `rotate(${d.x - 90}) translate(${d.y},0)`)
-      .on('click', (event, d) => onNodeSelect(d.data));
+      // Create color scale for groups
+      const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
-    node.append('circle')
-      .attr('r', 4)
-      .attr('fill', d => d.children ? '#555' : '#999');
+      // Create arc generator for segments
+      const arcGenerator = d3
+        .arc<d3.PieArcDatum<[string, FamilyMember[]]>>()
+        .innerRadius(radius * 0.3)
+        .outerRadius(radius);
 
-    node.append('text')
-      .attr('dy', '0.31em')
-      .attr('x', d => d.x < 180 === !d.children ? 6 : -6)
-      .attr('text-anchor', d => d.x < 180 === !d.children ? 'start' : 'end')
-      .attr('transform', d => d.x >= 180 ? 'rotate(180)' : null)
-      .text(d => d.data.name)
-      .clone(true).lower()
-      .attr('stroke', 'white');
-    
-    // Implement zoom and pan
-    const zoom = d3.zoom<SVGSVGElement, unknown>()
-      .scaleExtent([0.5, 5])
-      .on('zoom', (event) => {
-        g.attr('transform', event.transform);
-      });
+      // Create pie layout
+      const pie = d3
+        .pie<[string, FamilyMember[]]>()
+        .value(() => 1)
+        .sort(null);
 
-    svg.call(zoom);
+      // Draw segments
+      const segments = g
+        .selectAll(".segment")
+        .data(pie(groupedData))
+        .enter()
+        .append("path")
+        .attr("class", "segment")
+        .attr("d", arcGenerator)
+        .attr("fill", (d) => colorScale(d.data[0]))
+        .attr("opacity", 0.2);
 
-  }, [data, onNodeSelect]);
+      // Node positioning
+      const nodePositions = (() => {
+        const familyGroups = d3.group(data, (d) => d.family);
+        const pieLayout = d3
+          .pie<[string, FamilyMember[]]>()
+          .value(() => 1)
+          .sort(null)(Array.from(familyGroups));
 
-  return <svg ref={svgRef} width="100%" height="100%" viewBox="0 0 1200 1200"></svg>;
+        let positions: (FamilyMember & { x: number; y: number })[] = [];
+
+        pieLayout.forEach((slice, sliceIndex) => {
+          const familyMembers = slice.data[1];
+          const startAngle = slice.startAngle * (180 / Math.PI);
+          const endAngle = slice.endAngle * (180 / Math.PI);
+          const angleRange = endAngle - startAngle;
+
+          const maxLevel = Math.max(...familyMembers.map((m) => m.level));
+
+          familyMembers.forEach((member, memberIndex) => {
+            const memberAngle =
+              startAngle +
+              (angleRange * (memberIndex + 0.5)) / familyMembers.length;
+            const r = radius * (0.3 + (0.6 * member.level) / (maxLevel + 1)); // Adjust radial position based on level
+
+            positions.push({
+              ...member,
+              x: memberAngle,
+              y: r,
+            });
+          });
+        });
+
+        return positions;
+      })();
+  
+
+      const createStepLink = (source: any, target: any) => {
+        const sourceX = source.y * Math.cos(((source.x - 90) * Math.PI) / 180);
+        const sourceY = source.y * Math.sin(((source.x - 90) * Math.PI) / 180);
+        
+        const targetX = target.y * Math.cos(((target.x - 90) * Math.PI) / 180);
+        const targetY = target.y * Math.sin(((target.x - 90) * Math.PI) / 180);
+        
+        // Calculate angle difference
+        let angleDiff = target.x - source.x;
+        if (angleDiff > 180) angleDiff -= 360;
+        if (angleDiff < -180) angleDiff += 360;
+        
+        // Determine the sweep flag based on the angle difference
+        const sweepFlag = angleDiff > 0 ? 1 : 0;
+        
+        // Calculate the end point of the arc (point E)
+        const eX = source.y * Math.cos(((target.x - 90) * Math.PI) / 180);
+        const eY = source.y * Math.sin(((target.x - 90) * Math.PI) / 180);
+      
+        // Create the arc path
+        const arcPath = `M${sourceX},${sourceY} A${source.y},${source.y} 0 0,${sweepFlag} ${eX},${eY}`;
+      
+        // Create the straight line from E to target
+        const linePath = `L${targetX},${targetY}`;
+        
+        return arcPath + ' ' + linePath;
+      };
+
+      // Draw links
+      const links = g
+        .selectAll(".link")
+        .data(nodePositions.filter((d) => d.parentId))
+        .enter()
+        .append("path")
+        .attr("class", "link")
+        .attr("d", (d) => {
+          const parent = nodePositions.find((n) => n.id === d.parentId);
+          if (parent) {
+            // return createCurvedLink(parent, d);
+            return createStepLink(parent, d);
+          }
+          return null;
+        })
+        .attr("fill", "none")
+        .attr("stroke", "#999")
+        .attr("stroke-width", 1);
+
+      const nodes = g
+        .selectAll(".node")
+        .data(nodePositions)
+        .enter()
+        .append("circle")
+        .attr("class", "node")
+        .attr("transform", (d) => `rotate(${d.x - 90}) translate(${d.y},0)`)
+        .attr("r", 10) // Reduced size for better visibility
+        .attr("fill", (d) => colorScale(d.family))
+        .on("click", (event, d) => onNodeSelect(d));
+
+      const labels = g
+        .selectAll(".label")
+        .data(nodePositions)
+        .enter()
+        .append("text")
+        .attr("class", "label")
+        .attr("transform", (d) => {
+          const rotation = d.x - 90;
+          const translateX = d.y + 12; // Adjusted for smaller nodes
+          return `rotate(${rotation}) translate(${translateX},0) ${
+            rotation > 90 ? "rotate(180)" : ""
+          }`;
+        })
+        .attr("text-anchor", (d) => (d.x < 180 ? "start" : "end"))
+        .text((d) => d.name)
+        .attr("font-size", "8px"); // Reduced font size for better fit
+
+      // Add central text
+      g.append("text")
+        .attr("text-anchor", "middle")
+        .attr("font-size", "40px")
+        .text("Family Tree");
+
+      // Implement zoom and pan
+      const zoom = d3
+        .zoom<SVGSVGElement, unknown>()
+        .scaleExtent([0.5, 5])
+        .on("zoom", (event) => {
+          g.attr("transform", event.transform);
+        });
+
+      svg.call(zoom);
+    },
+    [data, onNodeSelect]
+  );
+
+  return (
+    <svg ref={svgRef} width="100%" height="100%" viewBox="0 0 1200 1200"></svg>
+  );
 };
