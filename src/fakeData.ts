@@ -1,221 +1,332 @@
-// import { TreeData } from "./types/TreeData";
+import { FamilyMember } from "./types/FamilyMember";
 
-// export const sampleData: TreeData = {
-//     name: "Root",
-//     children: [
+const Jayawardena: FamilyMember[] = [
+  {
+    id: "1",
+    name: "",
+    family: "JAYAWARDENA",
+    level: 0,
+    relationships: [],
+  },
+  {
+    id: "2",
+    name: "Cornalis Jayawardena",
+    family: "JAYAWARDENA",
+    level: 1,
+    relationships: [{ type: "child", targetId: "1" }],
+  },
+  {
+    id: "3",
+    name: "James Jayawardena",
+    family: "JAYAWARDENA",
+    level: 1,
+    relationships: [{ type: "sibling", targetId: "2" }],
+  },
 
-//       {
-//         name: "Category 01",
-//         children: [
-//           { name: "Subcategory 2.1", children: [
-//             { name: "Item 2.1.1" },
-//             { name: "Item 2.1.2" },
-//           ]},
-//           { name: "Subcategory 2.2", children: [
-//             { name: "Item 2.2.1" },
-//             { name: "Item 2.2.2" },
-//             { name: "Item 2.2.3" },
-//           ]},
-//         ]
-//       },
-      
-//       {
-//         name: "Category 02",
-//         children: [
-//           { name: "Subcategory 2.1", children: [
-//             { name: "Item 2.1.1" },
-//             { name: "Item 2.1.2" },
-//           ]},
-//           { name: "Subcategory 2.2", children: [
-//             { name: "Item 2.2.1" },
-//             { name: "Item 2.2.2" },
-//             { name: "Item 2.2.3" },
-//           ]},
-//         ]
-//       },
-//       {
-//         name: "Category 03",
-//         children: [
-//           { name: "Subcategory 2.1", children: [
-//             { name: "Item 2.1.1" },
-//             { name: "Item 2.1.2" },
-//           ]},
-//           { name: "Subcategory 2.2", children: [
-//             { name: "Item 2.2.1" },
-//             { name: "Item 2.2.2" },
-//             { name: "Item 2.2.3" },
-//           ]},
-//         ]
-//       },
-//       {
-//         name: "Category 04",
-//         children: [
-//           { name: "Subcategory 2.1", children: [
-//             { name: "Item 2.1.1" },
-//             { name: "Item 2.1.2" },
-//           ]},
-//           { name: "Subcategory 2.2", children: [
-//             { name: "Item 2.2.1" },
-//             { name: "Item 2.2.2" },
-//             { name: "Item 2.2.3" },
-//           ]},
-//         ]
-//       },
-//       {
-//         name: "Category 05",
-//         children: [
-//           { name: "Subcategory 2.1", children: [
-//             { name: "Item 2.1.1" },
-//             { name: "Item 2.1.2" },
-//           ]},
-//           { name: "Subcategory 2.2", children: [
-//             { name: "Item 2.2.1" },
-//             { name: "Item 2.2.2" },
-//             { name: "Item 2.2.3" },
-//           ]},
-//         ]
-//       },
-//       {
-//         name: "Category 06",
-//         children: [
-//           { name: "Subcategory 2.1", children: [
-//             { name: "Item 2.1.1" },
-//             { name: "Item 2.1.2" },
-//           ]},
-//           { name: "Subcategory 2.2", children: [
-//             { name: "Item 2.2.1" },
-//             { name: "Item 2.2.2" },
-//             { name: "Item 2.2.3" },
-//           ]},
-//         ]
-//       },
-//       {
-//         name: "Category 07",
-//         children: [
-//           { name: "Subcategory 2.1", children: [
-//             { name: "Item 2.1.1" },
-//             { name: "Item 2.1.2" },
-//           ]},
-//           { name: "Subcategory 2.2", children: [
-//             { name: "Item 2.2.1" },
-//             { name: "Item 2.2.2" },
-//             { name: "Item 2.2.3" },
-//           ]},
-//         ]
-//       },
-//       {
-//         name: "Category 08",
-//         children: [
-//           { name: "Subcategory 2.1", children: [
-//             { name: "Item 2.1.1" },
-//             { name: "Item 2.1.2" },
-//           ]},
-//           { name: "Subcategory 2.2", children: [
-//             { name: "Item 2.2.1" },
-//             { name: "Item 2.2.2" },
-//             { name: "Item 2.2.3" },
-//           ]},
-//         ]
-//       },
-//       {
-//         name: "Category 09",
-//         children: [
-//           { name: "Subcategory 2.1", children: [
-//             { name: "Item 2.1.1" },
-//             { name: "Item 2.1.2" },
-//           ]},
-//           { name: "Subcategory 2.2", children: [
-//             { name: "Item 2.2.1" },
-//             { name: "Item 2.2.2" },
-//             { name: "Item 2.2.3" },
-//           ]},
-//         ]
-//       },
-//       {
-//         name: "Category 10",
-//         children: [
-//           { name: "Subcategory 2.1", children: [
-//             { name: "Item 2.1.1" },
-//             { name: "Item 2.1.2" },
-//           ]},
-//           { name: "Subcategory 2.2", children: [
-//             { name: "Item 2.2.1" },
-//             { name: "Item 2.2.2" },
-//             { name: "Item 2.2.3" },
-//           ]},
-//         ]
-//       },
-//       {
-//         name: "Category 12",
-//         children: [
-//           { name: "Subcategory 2.1", children: [
-//             { name: "Item 2.1.1" },
-//             { name: "Item 2.1.2" },
-//           ]},
-//           { name: "Subcategory 2.2", children: [
-//             { name: "Item 2.2.1" },
-//             { name: "Item 2.2.2" },
-//             { name: "Item 2.2.3" },
-//           ]},
-//         ]
-//       },
-//       {
-//         name: "Category 13",
-//         children: [
-//           { name: "Subcategory 2.1", children: [
-//             { name: "Item 2.1.1" },
-//             { name: "Item 2.1.2" },
-//           ]},
-//           { name: "Subcategory 2.2", children: [
-//             { name: "Item 2.2.1" },
-//             { name: "Item 2.2.2" },
-//             { name: "Item 2.2.3" },
-//           ]},
-//         ]
-//       },
-//       {
-//         name: "Category 14",
-//         children: [
-//           { name: "Subcategory 2.1", children: [
-//             { name: "Item 2.1.1" },
-//             { name: "Item 2.1.2" },
-//           ]},
-//           { name: "Subcategory 2.2", children: [
-//             { name: "Item 2.2.1" },
-//             { name: "Item 2.2.2" },
-//             { name: "Item 2.2.3" },
-//           ]},
-//         ]
-//       },
+  {
+    id: "4",
+    name: "Daniel Jayawardena",
+    family: "JAYAWARDENA",
+    level: 2,
+    relationships: [{ type: "child", targetId: "2" }],
+  },
 
-//     ]
-//   };
+  {
+    id: "5",
+    name: "Theodore Godfri Jayawardena",
+    family: "JAYAWARDENA",
+    level: 2,
+    relationships: [{ type: "child", targetId: "3" }],
+  },
 
-// fakeData.ts
-import { FamilyMember } from './types/FamilyMember';
+  {
+    id: "6",
+    name: "Wilford Jayawardena",
+    family: "JAYAWARDENA",
+    level: 2,
+    relationships: [{ type: "child", targetId: "3" }],
+  },
 
+  {
+    id: "7",
+    name: "Felix Jayawardena",
+    family: "JAYAWARDENA",
+    level: 3,
+    relationships: [{ type: "child", targetId: "4" }],
+  },
+
+  {
+    id: "8",
+    name: "J.R Jayawardena",
+    family: "JAYAWARDENA",
+    level: 3,
+    relationships: [{ type: "child", targetId: "4" }],
+  },
+
+  {
+    id: "9",
+    name: "Girly Jayawardena",
+    family: "JAYAWARDENA",
+    level: 3,
+    relationships: [{ type: "child", targetId: "4" }],
+  },
+
+  {
+    id: "10",
+    name: "Ivy Jayawardena",
+    family: "JAYAWARDENA",
+    level: 4,
+    relationships: [{ type: "child", targetId: "7" }],
+  },
+];
+const Wijewardene: FamilyMember[] = [
+  {
+    id: "11",
+    name: "Don Phillip Wijayawardene",
+    family: "WIJAYAWARDENE",
+    level: 1,
+    relationships: [],
+  },
+  {
+    id: "12",
+    name: "Helena Depp Weerasinghe",
+    family: "WIJAYAWARDENE",
+    level: 1,
+    relationships: [{ type: "spouse", targetId: "11" }],
+  },
+  {
+    id: "13",
+    name: "Agnes Wijayawardene",
+    family: "WIJAYAWARDENE",
+    level: 2,
+    relationships: [{ type: "sibling", targetId: "11" }, {type: "spouse", targetId: "6"}],
+  },
+
+  {
+    id: "14",
+    name: "Don Walter Wijayawardene",
+    family: "WIJAYAWARDENE",
+    level: 2,
+    relationships: [{ type: "child", targetId: "11" }],
+  },
+
+  {
+    id: "15",
+    name: "Don Charles Wijayawardene",
+    family: "WIJAYAWARDENE",
+    level: 2,
+    relationships: [{ type: "child", targetId: "11" }],
+  },
+
+  {
+    id: "16",
+    name: "Wimala Wijayawardene",
+    family: "WIJAYAWARDENE",
+    level: 2,
+    relationships: [{type: "spouse", targetId: "15"}],
+  },
+
+  {
+    id: "17",
+    name: "Don Edmond Wijayawardene",
+    family: "WIJAYAWARDENE",
+    level: 2,
+    relationships: [{ type: "child", targetId: "11" }],
+  },
+
+  {
+    id: "18",
+    name: "Don Luise Wijayawardene",
+    family: "WIJAYAWARDENE",
+    level: 2,
+    relationships: [{ type: "child", targetId: "11" }],
+  },
+
+  {
+    id: "19",
+    name: "Don Phillip Alexander Wijayawardene",
+    family: "WIJAYAWARDENE",
+    level: 2,
+    relationships: [{ type: "child", targetId: "11" }],
+  },
+
+  {
+    id: "20",
+    name: "Don Richard Wijayawardene",
+    family: "WIJAYAWARDENE",
+    level: 2,
+    relationships: [{ type: "child", targetId: "11" }],
+  },
+
+  {
+    id: "21",
+    name: "Upali Wijayawardene",
+    family: "WIJAYAWARDENE",
+    level: 3,
+    relationships: [{ type: "child", targetId: "15" }],
+  },
+  {
+    id: "22",
+    name: "Anoja Devu Wijayawardene",
+    family: "WIJAYAWARDENE",
+    level: 3,
+    relationships: [{ type: "child", targetId: "15" }, {type: "sibling", targetId: "21"}],
+  },
+  {
+    id: "23",
+    name: "Stanley Wijesundara",
+    family: "WIJAYAWARDENE",
+    level: 3,
+    relationships: [{type: "spouse", targetId: "22"}],
+  },
+  {
+    id: "24",
+    name: "Rewatha Wijewardene",
+    family: "WIJAYAWARDENE",
+    level: 3,
+    relationships: [{type: "child", targetId: "17"}],
+  },
+  {
+    id: "25",
+    name: "Donald Joseph Wijewardene",
+    family: "WIJAYAWARDENE",
+    level: 3,
+    relationships: [{type: "child", targetId: "18"}],
+  },
+  {
+    id: "26",
+    name: "Irangani Wijewardene",
+    family: "WIJAYAWARDENE",
+    level: 3,
+    relationships: [{type: "child", targetId: "19"},{type: "spouse", targetId: "24"}],
+  },
+  {
+    id: "27",
+    name: "Ranjith Wijewardene",
+    family: "WIJAYAWARDENE",
+    level: 3,
+    relationships: [{type: "child", targetId: "20"}],
+  },
+  {
+    id: "28",
+    name: "Nalini Wijewardene",
+    family: "WIJAYAWARDENE",
+    level: 3,
+    relationships: [{type: "child", targetId: "20"}],
+  },
+  {
+    id: "29",
+    name: "Ruwan Wijewardene",
+    family: "WIJAYAWARDENE",
+    level: 4,
+    relationships: [{type: "child", targetId: "27"}],
+  },
+
+
+];
+const Meedeniya: FamilyMember[] = [
+  {
+    id: "30",
+    name: "Joseph Henry Meedeniya",
+    family: "MEEDENIYA",
+    level: 1,
+    relationships: [],
+  },
+  {
+    id: "31",
+    name: "Emilia Maddalena",
+    family: "MEEDENIYA",
+    level: 1,
+    relationships: [{ type: "spouse", targetId: "30" }],
+  },
+  {
+    id: "32",
+    name: "Alice Ruby Meedeniya",
+    family: "MEEDENIYA",
+    level: 2,
+    relationships: [{ type: "child", targetId: "30" }, {type: "spouse", targetId: "20"}],
+  },
+
+  {
+    id: "33",
+    name: "Adeline Meedenya",
+    family: "MEEDENIYA",
+    level: 2,
+    relationships: [{ type: "child", targetId: "30" }],
+  },
+];
+
+const Other1: FamilyMember[] = [
+  {
+    id: "34",
+    name: "Francis Molamure",
+    family: "OTHER_1",
+    level: 1,
+    relationships: [{type: "spouse", targetId: "33"}],
+  },
+  {
+    id: "35",
+    name: "",
+    family: "OTHER_1",
+    level: 1,
+    relationships: [],
+  },
+  {
+    id: "36",
+    name: "Danny Weerathunga",
+    family: "OTHER_1",
+    level: 3,
+    relationships: [{type: "child", targetId: "35"}],
+  },
+  {
+    id: "37",
+    name: "Emaline Weerathunga",
+    family: "OTHER_1",
+    level: 3,
+    relationships: [{type: "child", targetId: "35"}],
+  },
+]
+const Rajapaksa: FamilyMember[] = [
+  {
+    id: "38",
+    name: "Don David Rajapaksa",
+    family: "RAJAPAKSA",
+    level: 1,
+    relationships: [],
+  },
+  {
+    id: "39",
+    name: "Gimara Munasinghe",
+    family: "RAJAPAKSA",
+    level: 1,
+    relationships: [{type: "spouse", targetId: "38"}],
+  },
+  {
+    id: "40",
+    name: "Don Matthew Rajapaksa",
+    family: "RAJAPAKSA",
+    level: 2,
+    relationships: [{type: "child", targetId: "38"},{type: "spouse", targetId: "37"}],
+  },
+  {
+    id: "41",
+    name: "Don Alvin Rajapaksa",
+    family: "RAJAPAKSA",
+    level: 2,
+    relationships: [{type: "child", targetId: "38"}],
+  },
+  {
+    id: "41",
+    name: "Dandina Samarasinghe",
+    family: "RAJAPAKSA",
+    level: 2,
+    relationships: [{type: "spouse", targetId: "41"}],
+  },
+]
 export const sampleFamilyData: FamilyMember[] = [
-  { id: '1', name: 'Person 1', family: 'Family A', level: 0 },
-  { id: '2', name: 'Person 2', family: 'Family A', parentId: '1', level: 1 },
-  { id: '3', name: 'Person 3', family: 'Family A', parentId: '2', level: 2 },
-  { id: '4', name: 'Person 4', family: 'Family A', parentId: '2', level: 2 },
-  
-  { id: '5', name: 'Person 5', family: 'Family B', level: 0 },
-  { id: '6', name: 'Person 6', family: 'Family B', parentId: '5', level: 1 },
-  { id: '7', name: 'Person 7', family: 'Family B', parentId: '6', level: 2 },
-  { id: '18', name: 'Person 18', family: 'Family B', parentId: '5', level: 1 },
-  { id: '19', name: 'Person 19', family: 'Family B', parentId: '5', level: 1 },
-  
-  { id: '8', name: 'Person 8', family: 'Family C', level: 0 },
-  { id: '9', name: 'Person 9', family: 'Family C', parentId: '13', level: 1 },
-  { id: '10', name: 'Person 10', family: 'Family C', parentId: '9', level: 2 },
-  { id: '11', name: 'Person 11', family: 'Family C', parentId: '9', level: 2 },
-  
-  { id: '12', name: 'Person 12', family: 'Family D', level: 0 },
-  { id: '13', name: 'Person 13', family: 'Family D', parentId: '12', level: 1 },
-  
-  { id: '14', name: 'Person 14', family: 'Family E', level: 0 },
-  { id: '15', name: 'Person 15', family: 'Family E', parentId: '14', level: 1 },
-  { id: '16', name: 'Person 16', family: 'Family E', parentId: '14', level: 1 },
-  { id: '17', name: 'Person 17', family: 'Family E', parentId: '15', level: 2 },
+  ...Jayawardena,
+  ...Wijewardene,
+  ...Meedeniya,
+  ...Other1,
+  ...Rajapaksa
 ];

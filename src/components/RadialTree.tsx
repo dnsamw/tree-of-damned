@@ -1,14 +1,9 @@
 import React from "react";
 import * as d3 from "d3";
 import { useD3 } from "../hooks/useD3";
+import { FamilyMember } from "../types/FamilyMember";
 
-interface FamilyMember {
-  id: string;
-  name: string;
-  family: string;
-  parentId?: string;
-  level: number;
-}
+
 
 interface RadialTreeProps {
   data: FamilyMember[];
@@ -126,24 +121,47 @@ export const RadialTree: React.FC<RadialTreeProps> = ({
         return arcPath + ' ' + linePath;
       };
 
-      // Draw links
-      const links = g
-        .selectAll(".link")
-        .data(nodePositions.filter((d) => d.parentId))
+      const createLinks = (nodePositions: (FamilyMember & { x: number; y: number })[]) => {
+        let links: { source: any; target: any; type: string }[] = [];
+        
+        nodePositions.forEach(node => {
+          node.relationships.forEach(rel => {
+            const target = nodePositions.find(n => n.id === rel.targetId);
+            if (target) {
+              links.push({
+                source: node,
+                target: target,
+                type: rel.type
+              });
+            }
+          });
+        });
+        
+        return links;
+      };
+
+      const links = createLinks(nodePositions);
+
+
+      const linkColors:any = {
+        parent: "#1f77b4",
+        child: "#000",
+        sibling: "#2ca02c",
+        spouse: "#d62728",
+        grandparent: "#9467bd",
+        grandchild: "#8c564b"
+      };
+      
+      g.selectAll(".link")
+        .data(links)
         .enter()
         .append("path")
         .attr("class", "link")
-        .attr("d", (d) => {
-          const parent = nodePositions.find((n) => n.id === d.parentId);
-          if (parent) {
-            // return createCurvedLink(parent, d);
-            return createStepLink(parent, d);
-          }
-          return null;
-        })
+        .attr("d", d => createStepLink(d.source, d.target))
         .attr("fill", "none")
-        .attr("stroke", "#999")
-        .attr("stroke-width", 1);
+        .attr("stroke", d => linkColors[d.type])
+        .attr("stroke-width", 1)
+        .attr("stroke-dasharray", d => d.type === 'sibling' ? "5,5" : "none");
 
       const nodes = g
         .selectAll(".node")
@@ -165,7 +183,7 @@ export const RadialTree: React.FC<RadialTreeProps> = ({
         .attr("transform", (d) => {
           const rotation = d.x - 90;
           const translateX = d.y + 12; // Adjusted for smaller nodes
-          return `rotate(${rotation}) translate(${translateX},0) ${
+          return `rotate(${rotation}) translate(${translateX},-10) ${
             rotation > 90 ? "rotate(180)" : ""
           }`;
         })
@@ -176,8 +194,9 @@ export const RadialTree: React.FC<RadialTreeProps> = ({
       // Add central text
       g.append("text")
         .attr("text-anchor", "middle")
-        .attr("font-size", "40px")
-        .text("Family Tree");
+        .attr("font-size", "30px")
+        .attr("w", "200px")
+        .text("පවුල් ගස");
 
       // Implement zoom and pan
       const zoom = d3
@@ -186,6 +205,27 @@ export const RadialTree: React.FC<RadialTreeProps> = ({
         .on("zoom", (event) => {
           g.attr("transform", event.transform);
         });
+
+        const legend = svg.append("g")
+        .attr("class", "legend")
+        .attr("transform", `translate(20, ${height - 100})`);
+      
+      Object.entries(linkColors).forEach(([type, color], i) => {
+        legend.append("line")
+          .attr("x1", 0)
+          .attr("y1", i * 20)
+          .attr("x2", 30)
+          .attr("y2", i * 20)
+          .attr("stroke", color)
+          .attr("stroke-width", 5)
+          .attr("stroke-dasharray", type === 'sibling' ? "5,5" : "none");
+      
+        legend.append("text")
+          .attr("x", 40)
+          .attr("y", i * 20)
+          .attr("dy", "0.35em")
+          .text(type);
+      });
 
       svg.call(zoom);
     },
