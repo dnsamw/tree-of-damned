@@ -37,7 +37,7 @@ export const RadialTree: React.FC<RadialTreeProps> = ({
       // Create arc generator for segments
       const arcGenerator = d3
         .arc<d3.PieArcDatum<[string, FamilyMember[]]>>()
-        .innerRadius(radius * 0.3)
+        .innerRadius(radius * 0.2)
         .outerRadius(radius);
 
       // Create pie layout
@@ -187,7 +187,7 @@ export const RadialTree: React.FC<RadialTreeProps> = ({
         .attr("class", "label")
         .attr("transform", (d) => {
           const rotation = d.x - 90;
-          const translateX = d.y + 12; // Adjusted for smaller nodes
+          const translateX = d.y + 15; // Adjusted for smaller nodes
           return `rotate(${rotation}) translate(${translateX},-10) ${
             rotation > 90 ? "rotate(180)" : ""
           }`;
@@ -213,7 +213,9 @@ export const RadialTree: React.FC<RadialTreeProps> = ({
 
         const legend = svg.append("g")
         .attr("class", "legend")
-        .attr("transform", `translate(20, ${height - 100})`);
+        .attr("x1", 0)
+        // .attr("transform", `translate(60, ${height - 20})`);
+        .attr("transform", `translate(-60, 80)`);
       
       Object.entries(linkColors).forEach(([type, color], i) => {
         legend.append("line")
